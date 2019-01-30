@@ -1,0 +1,26 @@
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'maven'
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+
+    compile 'com.android.tools.build:gradle:3.0.1'
+    compile 'org.ow2.asm:asm:5.0.3'
+    compile 'org.ow2.asm:asm-commons:5.0.3'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+
+
+group = 'com.dany.timeplugin'
+version = '1.0.0'
+
+uploadArchives {
+    repositories.mavenDeployer {
+//        repository(uri('E:/demo/TimeCost/pluginlib'))
+//        repository(url: uri('E:/demo/TimeCost/pluginlib'))
+        repository(url: uri('../pluginlib'))
+    }
+}
