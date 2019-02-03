@@ -3,25 +3,25 @@
 该插件实现功能：在所有的方法的第一行及最后一行插入一行代码
 
     public void setTheme(int i) {
-        TimeCost.setStartTime("com/example/yindan/myapplication/CostTimeActivity_setTheme");
+        TimeCost.setStartTime("com/example/dany/myapplication/CostTimeActivity_setTheme");
         super.setTheme(i);
         Log.i("test", "setTheme");
-        TimeCost.setEndTime("com/example/yindan/myapplication/CostTimeActivity_setTheme");
+        TimeCost.setEndTime("com/example/dany/myapplication/CostTimeActivity_setTheme");
     }
 
     protected void onPause() {
-        TimeCost.setStartTime("com/example/yindan/myapplication/CostTimeActivity_onPause");
+        TimeCost.setStartTime("com/example/dany/myapplication/CostTimeActivity_onPause");
         super.onPause();
         KotlinInstace.Companion.getInstance().setA(false);
-        TimeCost.setEndTime("com/example/yindan/myapplication/CostTimeActivity_onPause");
+        TimeCost.setEndTime("com/example/dany/myapplication/CostTimeActivity_onPause");
     }
 
     private void OutMethod() {
-        TimeCost.setStartTime("com/example/yindan/myapplication/CostTimeActivity_OutMethod");
+        TimeCost.setStartTime("com/example/dany/myapplication/CostTimeActivity_OutMethod");
         InnerMethod1();
         InnerMethod2();
         InnerMethod3();
-        TimeCost.setEndTime("com/example/yindan/myapplication/CostTimeActivity_OutMethod");
+        TimeCost.setEndTime("com/example/dany/myapplication/CostTimeActivity_OutMethod");
     }
 
 如何使用：
