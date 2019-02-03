@@ -48,6 +48,7 @@ app中：
 apply plugin: "com.dany.timecost"
 
 
+
 新增如下类在自己的app目录中，包名，类名com.dany.util.TimeCost，方法名setStartTime，setEndTime不能变:
 
 package com.dany.util;    //包路径名及类名不能变，否则插入代码失败
@@ -110,6 +111,7 @@ I/System.out: costtime end:  class: CostTimeActivity  :  [OutMethod]  cost 601 m
 I/System.out: costtime end:  class: CostTimeActivity  :  [onCreate]  cost 671 ms, thread=1
 
 功能及用途：
+
 1.可用于查看某个时间段执行的所有类名 方法名
 
 2.可用于测试app启动过程中冷启动 热启动的时长，及每个方法的执行时间
