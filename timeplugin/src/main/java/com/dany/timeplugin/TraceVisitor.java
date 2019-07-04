@@ -45,9 +45,9 @@ public class TraceVisitor extends ClassVisitor {
                 if (className.contains("TimeCost")) {
                     return;
                 }
-                System.out.println("onMethodEnter------------ name="+name+", classname="+className);
+//                System.out.println("onMethodEnter------------ name="+name+", classname="+className);
 
-                mv.visitLdcInsn(className+name);
+                mv.visitLdcInsn(className+"_"+name);
                 mv.visitMethodInsn(INVOKESTATIC, "com/dany/util/TimeCost", "setStartTime", "(Ljava/lang/String;)V", false);
 
             }
@@ -59,7 +59,7 @@ public class TraceVisitor extends ClassVisitor {
                     return;
                 }
 
-                mv.visitLdcInsn(className+name);
+                mv.visitLdcInsn(className+"_"+name);
                 mv.visitMethodInsn(INVOKESTATIC, "com/dany/util/TimeCost", "setEndTime", "(Ljava/lang/String;)V", false);
 
 //                mv.visitLdcInsn(className);

@@ -1,1 +1,1 @@
-include ':app', ':timeplugin'
+include ':app', ':timeplugin', ':mysdk'

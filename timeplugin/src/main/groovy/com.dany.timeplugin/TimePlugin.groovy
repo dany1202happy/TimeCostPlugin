@@ -67,6 +67,7 @@ public class TimePlugin extends Transform implements Plugin<Project> {
                             //这里进行我们的处理 TODO
                             if (name.endsWith(".class") && !name.startsWith("R\$") &&
                                     !"R.class".equals(name) && !"BuildConfig.class".equals(name)) {
+                                println("=============directory name = "+name)
                                 ClassReader classReader = new ClassReader(file.bytes)
                                 ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
                                 def className = name.split(".class")[0]
@@ -91,16 +92,24 @@ public class TimePlugin extends Transform implements Plugin<Project> {
             }
 
             input.jarInputs.each { JarInput jarInput ->
-                def jarName = jarInput.name
-                def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
-                if (jarName.endsWith(".jar")) {
-                    jarName = jarName.substring(0, jarName.length() - 4)
+                if (jarInput.file) {
+                    System.out.println("jarInput is direcotry name="+jarInput.name)
                 }
-
-                def dest = outputProvider.getContentLocation(jarName + md5Name,
-                        jarInput.contentTypes, jarInput.scopes, Format.JAR)
-
-                FileUtils.copyFile(jarInput.file, dest)
+                handleJarInputs(jarInput, outputProvider)
+//                def jarName = jarInput.name
+//                if (jarInput.file) {
+//                    System.out.println("jarInput is direcotry name="+jarName)
+//                }
+//
+//                def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
+//                if (jarName.endsWith(".jar")) {
+//                    jarName = jarName.substring(0, jarName.length() - 4)
+//                }
+//
+//                def dest = outputProvider.getContentLocation(jarName + md5Name,
+//                        jarInput.contentTypes, jarInput.scopes, Format.JAR)
+//
+//                FileUtils.copyFile(jarInput.file, dest)
             }
         }
 
@@ -229,5 +238,60 @@ public class TimePlugin extends Transform implements Plugin<Project> {
         }*/
         println '//===============TracePlugin visit end===============//'
 
+    }
+
+    static void handleJarInputs(JarInput jarInput, TransformOutputProvider outputProvider) {
+        if (jarInput.file.getAbsolutePath().endsWith(".jar")) {
+            //重名名输出文件,因为可能同名,会覆盖
+            def jarName = jarInput.name
+            def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
+            if (jarName.endsWith(".jar")) {
+                jarName = jarName.substring(0, jarName.length() - 4)
+            }
+            JarFile jarFile = new JarFile(jarInput.file)
+            Enumeration enumeration = jarFile.entries()
+            File tmpFile = new File(jarInput.file.getParent() + File.separator + "classes_temp.jar")
+            //避免上次的缓存被重复插入
+            if (tmpFile.exists()) {
+                tmpFile.delete()
+            }
+            JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(tmpFile))
+            //用于保存
+            while (enumeration.hasMoreElements()) {
+                JarEntry jarEntry = (JarEntry) enumeration.nextElement()
+                String entryName = jarEntry.getName()
+                ZipEntry zipEntry = new ZipEntry(entryName)
+                InputStream inputStream = jarFile.getInputStream(jarEntry)
+                //插桩class
+                if (entryName.endsWith(".class") && !entryName.startsWith("R\$")
+                        && !"R.class".equals(entryName) && !"BuildConfig.class".equals(entryName)
+                        && filterJarByName(entryName)) {
+                    //class文件处理
+                    println '----------- deal with "jar" class file <' + entryName + '> -----------'
+                    jarOutputStream.putNextEntry(zipEntry)
+                    ClassReader classReader = new ClassReader(IOUtils.toByteArray(inputStream))
+                    ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
+                    ClassVisitor cv = new TraceVisitor("",classWriter)
+                    classReader.accept(cv, EXPAND_FRAMES)
+                    byte[] code = classWriter.toByteArray()
+                    jarOutputStream.write(code)
+                } else {
+                    jarOutputStream.putNextEntry(zipEntry)
+                    jarOutputStream.write(IOUtils.toByteArray(inputStream))
+                }
+                jarOutputStream.closeEntry()
+            }
+            //结束
+            jarOutputStream.close()
+            jarFile.close()
+            def dest = outputProvider.getContentLocation(jarName + md5Name,
+                    jarInput.contentTypes, jarInput.scopes, Format.JAR)
+            FileUtils.copyFile(tmpFile, dest)
+            tmpFile.delete()
+        }
+    }
+
+    static boolean filterJarByName(String jarName) {
+        return jarName.contains("qihoo")
     }
 }

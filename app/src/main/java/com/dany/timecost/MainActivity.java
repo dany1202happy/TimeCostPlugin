@@ -3,6 +3,8 @@ package com.dany.timecost;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.dany.mysdk.MainSdk;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -12,6 +14,8 @@ public class MainActivity extends AppCompatActivity {
 
         method1();
         method2();
+        MainSdk sdk = new MainSdk();
+        sdk.test();
     }
 
     private void method1() {
