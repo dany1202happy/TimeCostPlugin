@@ -46,7 +46,9 @@ buildscript {
 
 app中：
 apply plugin: "com.dany.timecost"
-
+timecost {//默认是true，可以不配置这个。false时，只在app中插桩，不处理第三方库
+    jarEnable false
+}
 
 
 新增如下类在自己的app目录中，包名，类名com.dany.util.TimeCost，方法名setStartTime，setEndTime不能变:
