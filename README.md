@@ -46,6 +46,7 @@ buildscript {
 
 app中：
 apply plugin: "com.dany.timecost"
+
 timecost {//默认是true，可以不配置这个。false时，只在app中插桩，不处理第三方库
     jarEnable false
 }
