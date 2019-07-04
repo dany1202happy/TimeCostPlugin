@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.dany.timecost'
+timecost {
+    jarEnable false
+}
 
 android {
     compileSdkVersion 26

@@ -20,9 +20,17 @@ import java.util.zip.ZipEntry
 import static org.objectweb.asm.ClassReader.EXPAND_FRAMES
 
 public class TimePlugin extends Transform implements Plugin<Project> {
+    def jarEnable
     void apply(Project project) {
+        project.extensions.create("timecost", TimeCostExtension)
+
         def android = project.extensions.getByType(AppExtension);
         android.registerTransform(this)
+
+        project.afterEvaluate {
+            def extension = project.extensions.findByName("timecost") as TimeCostExtension
+            jarEnable = extension.jarEnable
+        }
     }
 
 
@@ -95,21 +103,24 @@ public class TimePlugin extends Transform implements Plugin<Project> {
                 if (jarInput.file) {
                     System.out.println("jarInput is direcotry name="+jarInput.name)
                 }
-                handleJarInputs(jarInput, outputProvider)
-//                def jarName = jarInput.name
-//                if (jarInput.file) {
-//                    System.out.println("jarInput is direcotry name="+jarName)
-//                }
-//
-//                def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
-//                if (jarName.endsWith(".jar")) {
-//                    jarName = jarName.substring(0, jarName.length() - 4)
-//                }
-//
-//                def dest = outputProvider.getContentLocation(jarName + md5Name,
-//                        jarInput.contentTypes, jarInput.scopes, Format.JAR)
-//
-//                FileUtils.copyFile(jarInput.file, dest)
+                if (jarEnable) {
+                    handleJarInputs(jarInput, outputProvider)
+                } else {
+                    def jarName = jarInput.name
+                    if (jarInput.file) {
+                        System.out.println("jarInput is direcotry name="+jarName)
+                    }
+
+                    def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
+                    if (jarName.endsWith(".jar")) {
+                        jarName = jarName.substring(0, jarName.length() - 4)
+                    }
+
+                    def dest = outputProvider.getContentLocation(jarName + md5Name,
+                            jarInput.contentTypes, jarInput.scopes, Format.JAR)
+
+                    FileUtils.copyFile(jarInput.file, dest)
+                }
             }
         }
 
@@ -291,7 +302,8 @@ public class TimePlugin extends Transform implements Plugin<Project> {
         }
     }
 
+    //need modify to what u want
     static boolean filterJarByName(String jarName) {
-        return jarName.contains("qihoo")
+        return jarName.contains("mysdk")
     }
 }
