@@ -123,3 +123,9 @@ I/System.out: costtime end:  class: CostTimeActivity  :  [onCreate]  cost 671 ms
 2.可用于测试app启动过程中冷启动 热启动的时长，及每个方法的执行时间
 
 3.可在任意方法执行时，插入某些功能代码
+
+
+版本说明：
+classpath 'com.dany.timeplugin:timeplugin:1.0.1'   只打印app里的方法耗时
+classpath 'com.dany.timeplugin:timeplugin:1.0.2'   打印app和jar包里的耗时
+classpath 'com.dany.timeplugin:timeplugin:1.0.3'   增加jarEnable false开关，默认是true
